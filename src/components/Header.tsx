@@ -8,6 +8,20 @@ import { Button } from "./ui/button";
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import { useTodos } from "@/store/useTodo";
+import { useRouter } from "next/navigation";
+
 const Header = ({ className }: HeaderProps) => {
   return (
     <div
@@ -64,23 +78,54 @@ function DashDetails() {
           <KanbanBoard />
         </div>
 
-        <div className="">
-          <Button
-            className="pl-2 flex flex-1 hover:shadow-md"
-            variant={"secondary"}
-           
-          >
-            <div className="flex flex-col items-center justify-center gap-1 text-center">
-              <div className="flex items-center gap-2 justify-center p-3">
-                <LogOutIcon className="h-4 w-4 text-primary" />
-                <h3 className="text-base font-semibold tracking-tight text-foreground/70">
-                  Logout
-                </h3>
+        <LogoutDialog>
+          <div className="">
+            <Button
+              className="pl-2 flex flex-1 hover:shadow-md"
+              variant={"secondary"}
+            >
+              <div className="flex flex-col items-center justify-center gap-1 text-center">
+                <div className="flex items-center gap-2 justify-center p-3">
+                  <LogOutIcon className="h-4 w-4 text-primary" />
+                  <h3 className="text-base font-semibold tracking-tight text-foreground/70">
+                    Logout
+                  </h3>
+                </div>
               </div>
-            </div>
-          </Button>
-        </div>
+            </Button>
+          </div>
+        </LogoutDialog>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function LogoutDialog({ children }: { children: React.ReactNode }) {
+  const { reset } = useTodos();
+  const router = useRouter();
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent className="dark border-none">
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account and remove your data from our servers.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => {
+              reset();
+              router.replace("/login");
+            }}
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

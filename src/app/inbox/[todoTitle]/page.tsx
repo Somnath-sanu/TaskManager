@@ -11,7 +11,7 @@ import React from "react";
 function Page({ params: { todoTitle } }: { params: { todoTitle: string } }) {
   const { todos } = useTodos();
 
-  const todo = todos.find((t) => t.taskTitle === todoTitle);
+  const todo = todos.find((t) => t.taskTitle === decodeURIComponent(todoTitle));
 
   const { toast } = useToast();
   const router = useRouter();

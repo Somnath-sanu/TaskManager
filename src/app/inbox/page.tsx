@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
 import AddTaskDialog from "@/components/AddTaskDialog";
+import { useEffect } from "react";
 
 function Page() {
   const {
@@ -33,14 +34,13 @@ function Page() {
 
   const router = useRouter();
 
-  console.log({
-    open,
-  });
-
-  if (!user) {
-    router.replace("/login");
-    return;
-  }
+  useEffect(() => {
+    if (!user) {
+      router.replace("/login");
+    } else {
+      router.replace("/inbox");
+    }
+  }, [user, router]);
 
   const filteredAndSortedTodos = todos
     .filter((todo) => {
@@ -56,19 +56,21 @@ function Page() {
     });
 
   return (
-    <main className="relative flex max-h-screen transition-all w-full flex-col items-center gap-5 sm:gap-10">
+    <main className="relative flex max-h-screen transition-all w-full flex-col items-center gap-5 sm:gap-10 ">
       <Header className={"fixed left-0 top-0"} />
 
       {!!todos.length && (
         <div className="flex justify-between w-full max-w-[690px] p-4 rounded-xl  mt-[99px] font-light sm:flex-row flex-col">
-          <div className="flex gap-4 text-black  justify-center">
+          <div className="flex gap-2 text-black  justify-center sm:flex-row flex-col w-fit">
             {/* Filter by Status */}
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="p-2 rounded-lg bg-[#e5e5e5] cursor-pointer border-none outline-none"
+              className="p-2 rounded-lg bg-[#e5e5e5] cursor-pointer border-none outline-none flex flex-wrap"
             >
-              <option value="All">All Status</option>
+              <option value="All" className="max-w-[50px] w-full text-sm">
+                All Status
+              </option>
               <option value="To Do">To Do</option>
               <option value="In Progress">In Progress</option>
               <option value="Completed">Completed</option>
@@ -78,7 +80,7 @@ function Page() {
             <select
               value={filterPriority}
               onChange={(e) => setFilterPriority(e.target.value)}
-              className="p-2 rounded-lg bg-[#e5e5e5]  cursor-pointer border-none outline-none"
+              className="p-2 rounded-lg bg-[#e5e5e5]  cursor-pointer border-none outline-none flex flex-wrap overflow-hidden"
             >
               <option value="All">All Priorities</option>
               <option value="Low">Low</option>
@@ -88,7 +90,7 @@ function Page() {
           </div>
 
           {/* Sort by Due Date */}
-          <div className="flex items-center justify-center my-2 sm:my-0">
+          <div className="flex items-center sm:justify-center my-2 sm:my-0 justify-start">
             <select
               value={sortByDueDate}
               onChange={(e) =>
@@ -104,24 +106,27 @@ function Page() {
       )}
 
       {filteredAndSortedTodos.length > 0 ? (
-        <ScrollArea className="h-[calc(100vh-160px)] max-w-[730px]  w-full">
-          <div className="flex flex-col items-center mb-10 w-full gap-10 px-5 ">
+        <ScrollArea className="h-[calc(100vh-160px)] max-w-[730px]  w-full ">
+          <div className="flex flex-col items-center justify-center mb-10 w-full gap-5">
             <ul
-              className="flex w-full  flex-col gap-5 mt-4 "
+              className="flex flex-col gap-5 mt-4 w-full"
               title="click to view detail"
             >
               {filteredAndSortedTodos.map((todo, id) => (
                 <li
-                  className="flex items-center justify-between gap-3 rounded-lg  bg-cover p-5 hover:shadow-xl shadow-lg"
+                  className="flex items-center sm:justify-evenly sm:gap-3 gap-0  rounded-lg  bg-cover  w-full hover:shadow-xl shadow-lg "
                   key={id}
                 >
-                  <Link href={`/inbox/${todo.taskTitle}`} className="w-full">
+                  <Link
+                    href={`/inbox/${todo.taskTitle}`}
+                    className="sm:w-full  truncate  w-full pl-6 sm:pl-0 flex-1"
+                  >
                     <div className="space-y-2">
                       <p className="line-clamp-1 text-lg font-bold">
                         {todo.taskTitle}
                       </p>
                       <div className="flex flex-col gap-2">
-                        <div className="max-w-[50%] w-full">
+                        <div className="max-w-[30%] w-full truncate">
                           {!!todo.description && (
                             <p className="text-sm font-light text-blue-100 font-serif line-clamp-1">
                               {todo.description}
@@ -173,37 +178,40 @@ function Page() {
                         <span className="font-light text-[#f2d530] flex-none">
                           Due date :
                         </span>
-                        <p>{moment(todo.dueDate).format("LL")}</p>
+                        <p className="block truncate">
+                          {moment(todo.dueDate).format("LL")}
+                        </p>
                       </div>
                     </div>
                   </Link>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={"ghost"}
-                      size={"icon"}
-                      className="flex justify-center items-center hover:bg-red-500"
-                      onClick={() => {
-                        deleteTodo(todo.taskTitle);
-                      }}
-                    >
-                      <Trash className="size-5" />
-                    </Button>
-                    <AddTaskDialog open={open} setOpen={setOpen}>
+                  <div className="flex gap-2 w-fit flex-1 justify-end">
+                    <div className="flex gap-2 mr-3">
                       <Button
-                        variant={"secondary"}
+                        variant={"ghost"}
                         size={"icon"}
-                        className="flex justify-center items-center"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMode("EDIT");
-                          setEditData(todo);
-                          setOpen(true);
-                          console.log("Edit clicked, opening dialog");
+                        className="flex justify-center items-center hover:bg-red-500"
+                        onClick={() => {
+                          deleteTodo(todo.taskTitle);
                         }}
                       >
-                        <Pencil className="size-5" />
+                        <Trash className="size-5" />
                       </Button>
-                    </AddTaskDialog>
+                      <AddTaskDialog open={open} setOpen={setOpen}>
+                        <Button
+                          variant={"secondary"}
+                          size={"icon"}
+                          className="flex justify-center items-center"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMode("EDIT");
+                            setEditData(todo);
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="size-5" />
+                        </Button>
+                      </AddTaskDialog>
+                    </div>
                   </div>
                 </li>
               ))}

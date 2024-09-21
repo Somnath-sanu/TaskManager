@@ -27,6 +27,7 @@ interface TodoProps {
   updateTodoStatus: (taskId: string, newStatus: string) => void;
   user: boolean;
   setUser: (val: boolean) => void;
+  reset: () => void;
 }
 
 export const useTodos = create<TodoProps>()(
@@ -83,7 +84,14 @@ export const useTodos = create<TodoProps>()(
       },
       user: false,
       setUser: (val) => set({ user: val }),
+      reset: () => {
+        // Clear all data and local storage
+        set({ todos: [], open: false, mode: "ADD", user: false });
+        // Clear persisted state from local storage
+        localStorage.removeItem("todo-data");
+      },
     }),
+
     {
       name: "todo-data",
       storage: createJSONStorage(() => localStorage),

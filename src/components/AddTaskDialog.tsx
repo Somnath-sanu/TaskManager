@@ -51,14 +51,9 @@ export default function AddTaskDialog({
 }) {
   const { toast } = useToast();
 
-  const { setTodos, mode, editData, todos  } = useTodos();
+  const { setTodos, mode, editData, todos } = useTodos();
 
-  console.log({
-    open
-  });
-  
-
-  //TODO: Toasts
+ 
 
   let defaultValues = {
     taskTitle: "",
@@ -69,10 +64,6 @@ export default function AddTaskDialog({
   };
 
   if (mode === "EDIT") defaultValues = editData;
-
-  console.log({
-    defaultValues,
-  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -89,9 +80,14 @@ export default function AddTaskDialog({
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const { taskTitle, description, priority, dueDate, status } = data;
-    console.log({
-      data,
-    });
+
+    if (taskTitle.length > 15) {
+      toast({
+        description: "Task title cannot be more than 15 characters",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const exixts = todos.find((t) => t.taskTitle === taskTitle);
     const isExist = !!exixts;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React from "react";
 import { Plus } from "lucide-react";
 import AddTaskDialog from "@/components/AddTaskDialog";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,6 @@ import { useTodos } from "@/store/useTodo";
 
 export function AddTaskWrapper() {
   const { open, setOpen, setMode } = useTodos();
-
-  console.log({
-    open
-  });
 
   return (
     <AddTaskDialog open={open} setOpen={setOpen}>

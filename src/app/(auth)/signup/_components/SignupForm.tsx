@@ -36,12 +36,9 @@ export default function SignUpForm() {
 
   async function onSubmit(values: SignUpValues) {
     setError(undefined);
-    console.log({
-      values,
-    });
 
     startTransition(async () => {
-      const { error , message } = await signup(values); //* if redirects fails then error
+      const { error, message } = await signup(values); //* if redirects fails then error
       if (error) {
         setError(error);
       } else {
