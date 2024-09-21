@@ -126,10 +126,10 @@ function Page() {
                         {todo.taskTitle}
                       </p>
                       <div className="flex flex-col gap-2">
-                        <div className="max-w-[30%] w-full truncate">
+                        <div className="max-w-[30%] w-full">
                           {!!todo.description && (
-                            <p className="text-sm font-light text-blue-100 font-serif line-clamp-1">
-                              {todo.description}
+                            <p className="text-sm font-light text-blue-100 font-serif line-clamp-1 truncate ">
+                              {`${(todo.description).slice(0,10)}...`}
                             </p>
                           )}
                         </div>
